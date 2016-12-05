@@ -170,3 +170,37 @@ struct tinysmf_parser_ctx {
 };
 
 int tinysmf_parse_stream(struct tinysmf_parser_ctx *, FILE *);
+
+struct tinysmf_writer_ctx {
+	struct tinysmf_file_info  file_info;
+	FILE                     *stream;
+	uint32_t                  track_size;
+	uint32_t                  current_track_start;
+};
+
+static inline int
+tinysmf_midi_msg_size(uint8_t status_byte) {
+	switch (status_byte & 0xF0) {
+	case 0x80:
+	case 0x90:
+	case 0xA0:
+	case 0xB0:
+	case 0xE0:
+		return 2;
+
+	case 0xC0:
+	case 0xD0:
+		return 1;
+
+	default:
+		return 0;
+	}
+}
+
+int tinysmf_write_file_start(struct tinysmf_writer_ctx *);
+int tinysmf_write_track_start(struct tinysmf_writer_ctx *, uint32_t size);
+int tinysmf_write_track_end(struct tinysmf_writer_ctx *);
+int tinysmf_write_meta_event(struct       tinysmf_writer_ctx *,
+                             const struct tinysmf_meta_event *);
+int tinysmf_write_midi_event(struct       tinysmf_writer_ctx *,
+                             const struct tinysmf_midi_event *);

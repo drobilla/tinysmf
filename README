@@ -3,8 +3,8 @@
   |_|| |\/_>| | ||
         /
 
-  tinysmf is a library for parsing standard midi files. it has no data
-  model of its own, instead using callbacks to pass data into the client
+  tinysmf is a library for parsing and writing standard midi files. it has no
+  data model of its own, instead using callbacks to pass data into the client
   code.
 
   made available under a liberal 2-clause BSD license, and consisting of

@@ -190,26 +190,6 @@ read_meta_event(struct tinysmf_parser_ctx *ctx, FILE *f,
 }
 
 static ssize_t
-midi_msg_size(uint8_t status_byte)
-{
-	switch (status_byte & 0xF0) {
-	case 0x80:
-	case 0x90:
-	case 0xA0:
-	case 0xB0:
-	case 0xE0:
-		return 2;
-
-	case 0xC0:
-	case 0xD0:
-		return 1;
-
-	default:
-		return 0;
-	}
-}
-
-static ssize_t
 read_midi_event(struct tinysmf_parser_ctx *ctx, FILE *f,
 		size_t avail, int delta, uint8_t *status_buf, uint8_t first_byte)
 {
@@ -229,13 +209,13 @@ read_midi_event(struct tinysmf_parser_ctx *ctx, FILE *f,
 		*status_buf = first_byte;
 		buf = &ev.bytes[1];
 
-		to_read = midi_msg_size(ev.bytes[0]);
+		to_read = tinysmf_midi_msg_size(ev.bytes[0]);
 	} else {
 		ev.bytes[0] = *status_buf;
 		ev.bytes[1] = first_byte;
 		buf = &ev.bytes[2];
 
-		to_read = midi_msg_size(ev.bytes[0]);
+		to_read = tinysmf_midi_msg_size(ev.bytes[0]);
 
 		/* this is here to protect us against wrap-around of an unsigned
 		 * type in the event midi_msg_size() returns 0 here, even though that
